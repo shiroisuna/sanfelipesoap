@@ -32,32 +32,24 @@ class soapController extends Controller
   	public function ConsultaPacienteTitular(){
 
 
-  		$request = $this->soapWrapper->add(NULL, function ($service) {
+  		$request = $this->soapWrapper->add('Agenda', function ($service) {
 	      $service
 	        ->wsdl('https://agenda.ws.clinicasanfelipe.com/WsAgendaCitas/Agenda.asmx?WSDL')
-	        ->trace(1)
+	        ->trace(true)
+	        ->cache(WSDL_CACHE_NONE)
 	        ->options(['Usuario'=> 'MEDISYN', 'Password'=> 'csfcsf']);
 	    });
 
-  		var_dump($request);
-             
-  		// // dd($request);
-  		
+	     $response = $request->call('Agenda.WM_ObtenerComunas', 
 
-	     $response = $request->call('SanFelipe.WM_BuscaPacienteTitularV2', [
-
-        [
+        array(
         	
         'Cod_Empresa' => '16',
-        'Cod_Sucursal' => '1',
-        'Rut_Paciente' => '20100162742',
-        'Dv_Paciente' => '',
+        'Cod_Sucursal' => '0',
         'Usuario' => 'UINTERNET',
-        'CodPacienteConsulta' => '0']
+        'Cod_Ubigeo' => '1391')
         
-       ]);
-
-	     // return response()->json($response);
+       );
 
 	     dd($response);
 	    
@@ -101,13 +93,13 @@ class soapController extends Controller
   		$options = array('trace'=>true, 'soap_version' => SOAP_1_1,
             'exceptions' => true,
             'trace' => 1,
-            'cache_wsdl' => WSDL_CACHE_MEMORY, 'User'=> 'MEDISYN', 'Password'=> 'csfcsf');
+            'cache_wsdl' => WSDL_CACHE_MEMORY, 'Usuario'=> 'MEDISYN', 'Password'=> 'csfcsf');
   		
-  		$client = new \SoapClient($wsdl, [
-            'Usuario'=> 'MEDISYN', 
-            'Password'=> 'csfcsf',
-            'encoding' => 'UTF-8',
-            'trace' => true]);
+  		// $client = new \SoapClient($wsdl, $options);
+
+  		$client = new \SoapClient($wsdl, array("Usuario"=> "MEDISYN", "Password"=> "csfcsf", "trace" => 1, "exception" => 0));
+
+  		// $header = new soapHeader(array('Usuario'=> 'MEDISYN', 'Password'=> 'csfcsf'));
 
   		var_dump($client->__getTypes()); 
   	}
