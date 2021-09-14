@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/', 'App\Http\Controllers\soapController@ConsultaPacienteTitular');
+Route::get('/', 'App\Http\Controllers\soapController@ConsultaPacienteTitular');
 
 Route::post('/', 'App\Http\Controllers\soapController@LogeoPaciente');

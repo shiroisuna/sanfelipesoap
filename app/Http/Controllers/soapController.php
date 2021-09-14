@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Artisaninweb\SoapWrapper\SoapWrapper;
+
 use SoapClient;
 
 class soapController extends Controller
@@ -13,6 +14,8 @@ class soapController extends Controller
    */
   protected $soapWrapper;
 
+  
+
   /**
    * SoapController constructor.
    *
@@ -20,6 +23,7 @@ class soapController extends Controller
    */
     public function __construct(SoapWrapper $soapWrapper){
     	$this->soapWrapper = $soapWrapper;
+    	
   	}
 
   /**
@@ -28,35 +32,42 @@ class soapController extends Controller
   	public function ConsultaPacienteTitular(){
 
 
-  		$this->soapWrapper->add(NULL, function ($service) {
+  		$request = $this->soapWrapper->add(NULL, function ($service) {
 	      $service
 	        ->wsdl('https://agenda.ws.clinicasanfelipe.com/WsAgendaCitas/Agenda.asmx?WSDL')
-	        ->trace(true)
-	        ->options(['User'=> 'MEDISYN', 'Password'=> 'csfcsf']);
+	        ->trace(1)
+	        ->options(['Usuario'=> 'MEDISYN', 'Password'=> 'csfcsf']);
 	    });
 
-      
-      $data = array(
+  		var_dump($request);
+             
+  		// // dd($request);
+  		
 
+	     $response = $request->call('SanFelipe.WM_BuscaPacienteTitularV2', [
+
+        [
+        	
         'Cod_Empresa' => '16',
-        'Cod_Sucursal' => '0',
+        'Cod_Sucursal' => '1',
         'Rut_Paciente' => '20100162742',
         'Dv_Paciente' => '',
         'Usuario' => 'UINTERNET',
-        'CodPacienteConsulta' => '0'
-       );
+        'CodPacienteConsulta' => '0']
+        
+       ]);
 
-      // $response = $this->soapWrapper->__getTypes();
+	     // return response()->json($response);
 
-	     $response = $this->soapWrapper->call('WM_BuscaPacienteTitularV2', $data);
-
-	     return $response;
+	     dd($response);
+	    
+	     // return $response;
 
 
 
   	}
 
-  	public function WM_LogeoPaciente (){
+  	public function LogeoPaciente (){
 
   		$this->soapWrapper->add(NULL, function ($service) {
 	      $service
@@ -80,5 +91,24 @@ class soapController extends Controller
 	     $response = $this->soapWrapper->call('WM_LogeoPaciente', $data);
 
 	     return $response;
+  	}
+
+
+  	public function test(){
+
+  		$wsdl = 'https://agenda.ws.clinicasanfelipe.com/WsAgendaCitas/Agenda.asmx?WSDL';
+
+  		$options = array('trace'=>true, 'soap_version' => SOAP_1_1,
+            'exceptions' => true,
+            'trace' => 1,
+            'cache_wsdl' => WSDL_CACHE_MEMORY, 'User'=> 'MEDISYN', 'Password'=> 'csfcsf');
+  		
+  		$client = new \SoapClient($wsdl, [
+            'Usuario'=> 'MEDISYN', 
+            'Password'=> 'csfcsf',
+            'encoding' => 'UTF-8',
+            'trace' => true]);
+
+  		var_dump($client->__getTypes()); 
   	}
 }
